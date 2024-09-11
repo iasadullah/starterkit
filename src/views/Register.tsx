@@ -33,6 +33,7 @@ import Illustrations from '@components/Illustrations'
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
 import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/router'
 
 // Util Imports
 // import { getLocalizedUrl } from '@/utils/i18n'
@@ -43,7 +44,7 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [userName, setUserName] = useState('')
-
+  const router = useRouter
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
   const lightImg = '/images/pages/auth-v2-mask-light.png'
@@ -88,6 +89,7 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
       if (insertError) {
         console.error('Error:', insertError.message)
         // Handle error here, e.g., show error message to user
+        return
       }
 
       router.push('/dashboard')
