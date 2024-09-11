@@ -5,7 +5,8 @@ import { useState } from 'react'
 
 // Next Imports
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+
+// import { useParams } from 'next/navigation'
 
 // MUI Imports
 import Typography from '@mui/material/Typography'
@@ -22,15 +23,16 @@ import classnames from 'classnames'
 
 // Type Imports
 import type { Mode } from '@core/types'
+
 // import type { Locale } from '@configs/i18n'
 
 // Component Imports
 import Logo from '@components/layout/shared/Logo'
 import Illustrations from '@components/Illustrations'
-
 // Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
+import { supabase } from '@/lib/supabaseClient'
 
 // Util Imports
 // import { getLocalizedUrl } from '@/utils/i18n'
@@ -38,6 +40,9 @@ import { useSettings } from '@core/hooks/useSettings'
 const RegisterV2 = ({ mode }: { mode: Mode }) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [userName, setUserName] = useState('')
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
@@ -62,6 +67,35 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
+  const onSubmitPressed = async (event: any) => {
+    event.preventDefault()
+    try {
+      const response = await supabase.auth.signUp({
+        email,
+        password
+      })
+      console.log('response', response)
+      if (response.error) {
+        console.error('Error:', response.error.message)
+        // Handle error here, e.g., show error message to user
+        return
+      }
+      // Handle response
+      const user = response?.data?.user
+      const { error: insertError } = await supabase
+        .from('user_roles')
+        .insert({ user_id: user?.id, role_id: 1, email, name }) // Default role: Guest (role_id: 1)
+      if (insertError) {
+        console.error('Error:', insertError.message)
+        // Handle error here, e.g., show error message to user
+      }
+
+      router.push('/dashboard')
+    } catch (error) {
+      console.error('Unexpected Error:', error)
+      // Handle unexpected errors
+    }
+  }
   return (
     <div className='flex bs-full justify-center'>
       <div
@@ -95,13 +129,14 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
             <Typography variant='h4'>Adventure starts here 🚀</Typography>
             <Typography className='mbe-1'>Make your app management easy and fun!</Typography>
           </div>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()} className='flex flex-col gap-5'>
-            <TextField autoFocus fullWidth label='Username' />
-            <TextField fullWidth label='Email' />
+          <form noValidate autoComplete='off' onSubmit={(e: any) => onSubmitPressed(e)} className='flex flex-col gap-5'>
+            <TextField onChange={e => setUserName(e.target.value)} autoFocus fullWidth label='Username' />
+            <TextField onChange={e => setEmail(e.target.value)} fullWidth label='Email' />
             <TextField
               fullWidth
               label='Password'
               type={isPasswordShown ? 'text' : 'password'}
+              onChange={e => setPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>

@@ -22,6 +22,7 @@
     "@mui/material": "5.16.4",
     "@mui/material-nextjs": "5.16.4",
     "@supabase/supabase-js": "^2.45.4",
+    "axios": "^1.7.7",
     "classnames": "2.5.1",
     "next": "14.2.5",
     "react": "18.3.1",

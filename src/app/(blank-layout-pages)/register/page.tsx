@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: 'Register',
   description: 'Register your account'
 }
+
 const RegisterV2Page = () => {
   // Vars
   const mode = getServerMode()
