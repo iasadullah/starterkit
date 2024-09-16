@@ -33,7 +33,8 @@ import themeConfig from '@configs/themeConfig'
 // Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
-import { POST } from '@/app/api/Auth/login/route'
+
+// import { POST } from '@/app/api/Auth/login/route'
 import { supabase } from '@/lib/supabaseClient'
 
 const LoginV2 = ({ mode }: { mode: Mode }) => {
@@ -76,12 +77,14 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
 
       if (response.error) {
         console.error('Error:', response.error.message)
+
         // Handle error here, e.g., show error message to user
       } else {
-        router.push('/dashboard')
+        router.push('/home')
       }
     } catch (error: any) {
       console.error('Error:', error.message)
+
       // Handle error here, e.g., show error message to user
     }
   }

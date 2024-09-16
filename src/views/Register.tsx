@@ -9,6 +9,8 @@ import Link from 'next/link'
 // import { useParams } from 'next/navigation'
 
 // MUI Imports
+import { useRouter } from 'next/navigation'
+
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
@@ -29,22 +31,25 @@ import type { Mode } from '@core/types'
 // Component Imports
 import Logo from '@components/layout/shared/Logo'
 import Illustrations from '@components/Illustrations'
+
 // Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
-import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/router'
+import { registerUser } from '@/app/api/Auth/register/auth'
 
 // Util Imports
 // import { getLocalizedUrl } from '@/utils/i18n'
 
 const RegisterV2 = ({ mode }: { mode: Mode }) => {
+  const router = useRouter()
+
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [userName, setUserName] = useState('')
-  const router = useRouter
+  const [error, setError] = useState<string | null>(null)
+
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
   const lightImg = '/images/pages/auth-v2-mask-light.png'
@@ -68,36 +73,26 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const onSubmitPressed = async (event: any) => {
+  const onSubmitPressed = async (event: React.FormEvent) => {
     event.preventDefault()
+    setError(null) // Clear any previous errors
+
     try {
-      const response = await supabase.auth.signUp({
-        email,
-        password
-      })
-      console.log('response', response)
-      if (response.error) {
-        console.error('Error:', response.error.message)
-        // Handle error here, e.g., show error message to user
-        return
-      }
-      // Handle response
-      const user = response?.data?.user
-      const { error: insertError } = await supabase
-        .from('user_roles')
-        .insert({ user_id: user?.id, role_id: 1, email, name }) // Default role: Guest (role_id: 1)
-      if (insertError) {
-        console.error('Error:', insertError.message)
-        // Handle error here, e.g., show error message to user
-        return
+      const result = await registerUser(email, password, userName)
+
+      console.log('User registered successfully:', result.message)
+      router.push('/login')
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred')
       }
 
-      router.push('/dashboard')
-    } catch (error) {
-      console.error('Unexpected Error:', error)
-      // Handle unexpected errors
+      console.error('Registration error:', error)
     }
   }
+
   return (
     <div className='flex bs-full justify-center'>
       <div
