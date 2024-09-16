@@ -34,9 +34,14 @@ import themeConfig from '@configs/themeConfig'
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
 
+// import { POST } from '@/app/api/Auth/login/route'
+import { supabase } from '@/lib/supabaseClient'
+
 const LoginV2 = ({ mode }: { mode: Mode }) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
@@ -60,9 +65,30 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
   )
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
-  const onSubmitPressed = (event: any) => {
+
+  const onSubmitPressed = async (event: any) => {
     event.preventDefault()
+
+    try {
+      const response = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (response.error) {
+        console.error('Error:', response.error.message)
+
+        // Handle error here, e.g., show error message to user
+      } else {
+        router.push('/home')
+      }
+    } catch (error: any) {
+      console.error('Error:', error.message)
+
+      // Handle error here, e.g., show error message to user
+    }
   }
+
   return (
     <div className='flex bs-full justify-center'>
       <div
@@ -99,16 +125,16 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
             noValidate
             autoComplete='off'
             onSubmit={e => {
-              e.preventDefault()
-              router.push('/')
+              onSubmitPressed(e)
             }}
             className='flex flex-col gap-5'
           >
-            <TextField autoFocus fullWidth label='Email' />
+            <TextField onChange={e => setEmail(e.target.value)} autoFocus fullWidth label='Email' />
             <TextField
               fullWidth
               label='Password'
               type={isPasswordShown ? 'text' : 'password'}
+              onChange={e => setPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>

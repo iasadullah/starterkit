@@ -5,9 +5,12 @@ import { useState } from 'react'
 
 // Next Imports
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+
+// import { useParams } from 'next/navigation'
 
 // MUI Imports
+import { useRouter } from 'next/navigation'
+
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
@@ -22,6 +25,7 @@ import classnames from 'classnames'
 
 // Type Imports
 import type { Mode } from '@core/types'
+
 // import type { Locale } from '@configs/i18n'
 
 // Component Imports
@@ -31,13 +35,20 @@ import Illustrations from '@components/Illustrations'
 // Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
+import { registerUser } from '@/app/api/Auth/register/auth'
 
 // Util Imports
 // import { getLocalizedUrl } from '@/utils/i18n'
 
 const RegisterV2 = ({ mode }: { mode: Mode }) => {
+  const router = useRouter()
+
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [userName, setUserName] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
@@ -61,6 +72,26 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
   )
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
+
+  const onSubmitPressed = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setError(null) // Clear any previous errors
+
+    try {
+      const result = await registerUser(email, password, userName)
+
+      console.log('User registered successfully:', result.message)
+      router.push('/login')
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred')
+      }
+
+      console.error('Registration error:', error)
+    }
+  }
 
   return (
     <div className='flex bs-full justify-center'>
@@ -95,13 +126,14 @@ const RegisterV2 = ({ mode }: { mode: Mode }) => {
             <Typography variant='h4'>Adventure starts here 🚀</Typography>
             <Typography className='mbe-1'>Make your app management easy and fun!</Typography>
           </div>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()} className='flex flex-col gap-5'>
-            <TextField autoFocus fullWidth label='Username' />
-            <TextField fullWidth label='Email' />
+          <form noValidate autoComplete='off' onSubmit={(e: any) => onSubmitPressed(e)} className='flex flex-col gap-5'>
+            <TextField onChange={e => setUserName(e.target.value)} autoFocus fullWidth label='Username' />
+            <TextField onChange={e => setEmail(e.target.value)} fullWidth label='Email' />
             <TextField
               fullWidth
               label='Password'
               type={isPasswordShown ? 'text' : 'password'}
+              onChange={e => setPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>
