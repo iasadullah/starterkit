@@ -1,11 +1,42 @@
-// src/hooks/useAuth.ts
-import { useAuth } from '../context/AuthContext'
+import { useState, useEffect } from 'react'
 
-export const useAuthActions = () => {
-  const { user, login, logout } = useAuth()
+import type { User, Session } from '@supabase/supabase-js'
 
-  const isLoggedIn = Boolean(user)
-  const role = user?.role || 'guest' // Placeholder for actual role
+import { supabase } from '@/lib/supabaseClient'
 
-  return { user, isLoggedIn, login, logout, role }
+// import { UserRole } from '@/types/roles'
+
+const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession()
+
+      setSession(session)
+      setUser(session?.user ?? null)
+      setIsLoading(false)
+    }
+
+    checkSession()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session)
+      setSession(session)
+      setUser(session?.user ?? null)
+      setIsLoading(false)
+    })
+
+    return () => {
+      authListener.subscription.unsubscribe()
+    }
+  }, [])
+
+  return { user, session, isLoading }
 }
+
+export default useAuth

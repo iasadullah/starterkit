@@ -66,26 +66,44 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const onSubmitPressed = async (event: any) => {
+  const onSubmitPressed = async (event: React.FormEvent) => {
     event.preventDefault()
 
+    // setLoginError(null)
+
     try {
-      const response = await supabase.auth.signInWithPassword({
+      // Authenticate the user
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password
       })
 
-      if (response.error) {
-        console.error('Error:', response.error.message)
+      if (authError) throw authError
 
-        // Handle error here, e.g., show error message to user
-      } else {
-        router.push('/home')
+      // Fetch user role
+      const { data: roleData, error: roleError } = await supabase.rpc('get_user_role', {
+        p_user_id: authData.user.id
+      })
+
+      if (roleError) throw roleError
+
+      // Combine auth data with role data
+      const userData = {
+        ...authData,
+        role: roleData && roleData.length > 0 ? roleData[0] : null
       }
+
+      console.log('User data:', userData)
+
+      // Store user data in localStorage or state management solution
+      localStorage.setItem('userData', JSON.stringify(userData))
+
+      // Navigate to home page or handle the successful login
+      router.push('/home')
     } catch (error: any) {
       console.error('Error:', error.message)
 
-      // Handle error here, e.g., show error message to user
+      // setLoginError(error.message)
     }
   }
 
