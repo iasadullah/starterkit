@@ -1,0 +1,94 @@
+{
+  "id": "c787f0b8-00ba-4f73-8b9e-3e6c7852f1ef",
+  "title": "Demo ",
+  "description": "this is descriptiom",
+  "category": "inter",
+  "created_by": "038d7837-0c61-42e3-a893-2cbdd994f3c4",
+  "is_published": true,
+  "modules": [
+    {
+      "id": "a25a694e-7279-45d7-abc6-2b7416881e2a",
+      "title": "asd",
+      "description": "asdasd",
+      "position": 0,
+      "lessons": [
+        {
+          "id": "d4687fbf-d183-4c18-b630-b408e9a7f0fb",
+          "title": "asdasd",
+          "content": "<p>asdasdasd</p>",
+          "position": 0,
+          "is_prerequisite": false,
+          "is_published": false,
+          "media_items": [],
+          "quizzes": []
+        }
+      ]
+    }
+  ]
+}
+
+{
+  "id": "038d7837-0c61-42e3-a893-2cbdd994f3c4",
+  "title": "Introduction to Web Development",
+  "description": "Learn the basics of HTML, CSS, and JavaScript",
+  "category": "Programming",
+  "created_by": "038d7837-0c61-42e3-a893-2cbdd994f3c4",
+  "is_published": false,
+  "modules": [
+    {
+      "id": "223e4567-e89b-12d3-a456-426614174001",
+      "title": "HTML Basics",
+      "description": "Learn the fundamentals of HTML",
+      "position": 0,
+      "lessons": [
+        {
+          "id": "323e4567-e89b-12d3-a456-426614174002",
+          "title": "Introduction to HTML Tags",
+          "content": "<p>In this lesson, we will cover basic HTML tags.</p>",
+          "position": 0,
+          "is_prerequisite": true,
+          "is_published": true,
+          "media_items": [
+            {
+              "id": "423e4567-e89b-12d3-a456-426614174003",
+              "type": "image",
+              "url": "https://example.com/html-structure.png",
+              "name": "HTML Structure Diagram"
+            }
+          ],
+          "quizzes": [
+            {
+              "id": "523e4567-e89b-12d3-a456-426614174004",
+              "title": "HTML Basics Quiz",
+              "max_attempts": 3,
+              "questions": [
+                {
+                  "id": "623e4567-e89b-12d3-a456-426614174005",
+                  "type": "multiple_choice",
+                  "question_text": "Which tag is used for the largest heading?",
+                  "options": [
+                    {
+                      "id": "1",
+                      "text": "<h1>",
+                      "is_correct": true
+                    },
+                    {
+                      "id": "2",
+                      "text": "<h6>",
+                      "is_correct": false
+                    },
+                    {
+                      "id": "3",
+                      "text": "<p>",
+                      "is_correct": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
