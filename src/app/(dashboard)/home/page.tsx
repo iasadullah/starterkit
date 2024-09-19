@@ -27,7 +27,7 @@ import { updateUserRole } from '@/services/users/updateRole/update-role'
 
 interface Person {
   user_id: number
-  role_name: ReactNode
+  role_name: string
   id: number
   name: string
   role: 'Teacher' | 'Student' | 'Guest'
@@ -60,15 +60,11 @@ const initialGuests: Person[] = [
 const initialCourses: Course[] = [
   { id: 1, title: 'React 101', teacher: 'John Doe', enrolledUsers: 150, totalDuration: '10h 30m' },
   { id: 2, title: 'Advanced TypeScript', teacher: 'Jane Smith', enrolledUsers: 120, totalDuration: '12h 15m' },
-  // Add more courses...
   { id: 3, title: 'Node.js Mastery', teacher: 'Mark Spencer', enrolledUsers: 95, totalDuration: '8h 45m' },
   { id: 4, title: 'GraphQL Basics', teacher: 'Emma Watson', enrolledUsers: 80, totalDuration: '7h 20m' },
   { id: 5, title: 'React Native Advanced', teacher: 'Alice Johnson', enrolledUsers: 110, totalDuration: '15h 0m' }
-  // Add more for testing pagination
 ]
-const ITEMS_PER_PAGE = 2 // Adjust the number of courses to display per page
-
-// Styled components for cards
+const ITEMS_PER_PAGE = 10
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: 12,
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
@@ -105,17 +101,11 @@ const Page: React.FC = () => {
   }
   const fetchAllUsers = async () => {
     try {
-      const response = await getAllUsers() // Assuming this is your API call
+      const response = await getAllUsers()
       console.log('response of users::', response)
-
-      // Separate users based on roles
       const teachers = response.filter(user => user.role_name === 'teacher')
       const students = response.filter(user => user.role_name === 'student')
-
-      // For undefined, null, or unknown role, assign them as guests
       const guests = response.filter(user => !user.role_name || ['undefined', 'null', 'guest'].includes(user.role_name))
-
-      // Update states
       setTeachers(teachers)
       setStudents(students)
       setGuests(guests)
@@ -242,7 +232,6 @@ const Page: React.FC = () => {
 
         {/* Courses */}
         <Grid container spacing={3}>
-          {/* Courses */}
           <Grid item xs={12}>
             <TableContainer component={Paper}>
               <Table>

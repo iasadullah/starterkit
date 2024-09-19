@@ -5,7 +5,7 @@ export const updateUserRole = async (userId: string, newRoleId: nubmer) => {
     const response = await fetch(`/api/Users/change-role?user_id=${userId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role_id: newRoleId }) // Pass the new role_id
+      body: JSON.stringify({ role_id: newRoleId })
     })
 
     if (!response.ok) {
