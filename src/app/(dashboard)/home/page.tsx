@@ -1,119 +1,296 @@
 'use client'
-import React, { useState, ChangeEvent, MouseEvent } from 'react'
-import { Box, Button, TextField, Typography, Grid, InputAdornment, IconButton } from '@mui/material'
-import { Edit, Save, Search } from '@mui/icons-material'
-import coursesData from '../../../utils/courseData/courseData'
-import { CourseCard, EditableHeading, SortingMenu, TabControls } from '../../../components/CourseList'
+import React, { useEffect, useState } from 'react'
+import {
+  Card,
+  Grid,
+  Typography,
+  Container,
+  Button,
+  CardContent,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  Paper,
+  TableBody,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Avatar
+} from '@mui/material'
+import { styled } from '@mui/system'
+import { getAllCourses } from '@/services/courseService'
+import { getAllUsers } from '@/services/users/users'
+import { updateUserRole } from '@/services/users/updateRole/update-role'
 
-// Define types for course and props
-interface Course {
-  id: string
-  title: string
-  isDraft: boolean
+interface Person {
+  user_id: number
+  role_name: ReactNode
+  id: number
+  name: string
+  role: 'Teacher' | 'Student' | 'Guest'
 }
 
+interface Course {
+  id: number
+  title: string
+  teacher: string
+  enrolledUsers: number
+  totalDuration: string
+}
+
+// Dummy data
+const initialTeachers: Person[] = [
+  { id: 1, name: 'John Doe', role: 'Teacher' },
+  { id: 2, name: 'Jane Smith', role: 'Teacher' }
+]
+
+const initialStudents: Person[] = [
+  { id: 3, name: 'Alice Brown', role: 'Student' },
+  { id: 4, name: 'Bob White', role: 'Student' }
+]
+
+const initialGuests: Person[] = [
+  { id: 5, name: 'Charlie Guest', role: 'Guest' },
+  { id: 6, name: 'Diana Guest', role: 'Guest' }
+]
+
+const initialCourses: Course[] = [
+  { id: 1, title: 'React 101', teacher: 'John Doe', enrolledUsers: 150, totalDuration: '10h 30m' },
+  { id: 2, title: 'Advanced TypeScript', teacher: 'Jane Smith', enrolledUsers: 120, totalDuration: '12h 15m' },
+  // Add more courses...
+  { id: 3, title: 'Node.js Mastery', teacher: 'Mark Spencer', enrolledUsers: 95, totalDuration: '8h 45m' },
+  { id: 4, title: 'GraphQL Basics', teacher: 'Emma Watson', enrolledUsers: 80, totalDuration: '7h 20m' },
+  { id: 5, title: 'React Native Advanced', teacher: 'Alice Johnson', enrolledUsers: 110, totalDuration: '15h 0m' }
+  // Add more for testing pagination
+]
+const ITEMS_PER_PAGE = 2 // Adjust the number of courses to display per page
+
+// Styled components for cards
+const CustomCard = styled(Card)(({ theme }) => ({
+  borderRadius: 12,
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+  marginBottom: theme.spacing(3),
+  padding: theme.spacing(3)
+}))
+
 const Page: React.FC = () => {
-  const [courseName, setCourseName] = useState<string>(localStorage.getItem('courseName') || 'Courses')
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [tabValue, setTabValue] = useState<number>(0)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedOption, setSelectedOption] = useState<string>('')
+  const [teachers, setTeachers] = useState(initialTeachers)
+  const [students, setStudents] = useState(initialStudents)
+  const [guests, setGuests] = useState(initialGuests)
+  const [courses, setCourse] = useState(initialCourses)
+  const [page, setPage] = useState(1)
+  const startIndex = (page - 1) * ITEMS_PER_PAGE
+  const paginatedCourses = courses.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(courses.length / ITEMS_PER_PAGE)
 
-  const open = Boolean(anchorEl)
+  const topCourses = [...courses].sort((a, b) => b.enrolledUsers - a.enrolledUsers).slice(0, 3)
 
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
+  useEffect(() => {
+    fetchAllCourses()
+    fetchAllUsers()
+  }, [])
+
+  const fetchAllCourses = async () => {
+    try {
+      console.log('Fetching all courses...')
+      const response = await getAllCourses()
+      console.log('response of courses::', response)
+      setCourse(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  const fetchAllUsers = async () => {
+    try {
+      const response = await getAllUsers() // Assuming this is your API call
+      console.log('response of users::', response)
+
+      // Separate users based on roles
+      const teachers = response.filter(user => user.role_name === 'teacher')
+      const students = response.filter(user => user.role_name === 'student')
+
+      // For undefined, null, or unknown role, assign them as guests
+      const guests = response.filter(user => !user.role_name || ['undefined', 'null', 'guest'].includes(user.role_name))
+
+      // Update states
+      setTeachers(teachers)
+      setStudents(students)
+      setGuests(guests)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const handleClose = () => {
-    setAnchorEl(null)
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(page + 1)
   }
 
-  const handleOptionClick = (option: string) => {
-    setSelectedOption(option)
-    // Apply the sorting/filtering logic here based on the selected option
-    handleClose()
+  const handlePreviousPage = () => {
+    if (page > 1) setPage(page - 1)
   }
-
-  const saveCourseName = () => {
-    localStorage.setItem('courseName', courseName)
-    setIsEditing(false)
+  const changeGuestRole = async (guestId: string, newRole: 'Teacher' | 'Student') => {
+    const roleId = newRole === 'Teacher' ? 2 : 3
+    try {
+      const result = await updateUserRole(guestId, roleId)
+      console.log('result::', result)
+      fetchAllUsers()
+    } catch (error) {
+      console.error(error)
+    }
   }
-
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value.toLowerCase())
-  }
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue)
-  }
-
-  const filteredCourses = coursesData.filter((course: Course) => {
-    if (tabValue === 1 && course.isDraft) return false // My Learning tab: no drafts
-    if (tabValue === 2 && !course.isDraft) return false // Drafts tab: only drafts
-    return course.title.toLowerCase().includes(searchQuery)
-  })
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Editable Heading */}
-      <EditableHeading
-        courseName={courseName}
-        setCourseName={setCourseName}
-        isEditing={isEditing}
-        toggleEditing={() => {
-          if (isEditing) saveCourseName()
-          else setIsEditing(true)
-        }}
-      />
+    <div>
+      <Typography component='h1' variant='h4' gutterBottom>
+        Admin Dashboard
+      </Typography>
+      <Grid container spacing={3}>
+        {/* Teachers */}
+        <Grid item xs={12} sm={6} md={4}>
+          <CustomCard>
+            <CardContent>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant='h4'>Teachers</Typography>
+                <Typography variant='h4'>{teachers.length}</Typography>
+              </div>
+              {teachers.map(teacher => (
+                <Typography key={teacher.id}>
+                  {teacher.name} - {teacher.role_name}
+                </Typography>
+              ))}
+            </CardContent>
+          </CustomCard>
+        </Grid>
 
-      {/* Create and Certificate Buttons */}
+        {/* Students */}
+        <Grid item xs={12} sm={6} md={4}>
+          <CustomCard>
+            <CardContent>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant='h4'>Students</Typography>
+                <Typography variant='h4'>{students.length} </Typography>
+              </div>
+              {students.map(student => (
+                <Typography key={student.id}>
+                  {student.name} - {student.role_name}
+                </Typography>
+              ))}
+            </CardContent>
+          </CustomCard>
+        </Grid>
 
-      {/* Tabs */}
-      <TabControls tabValue={tabValue} handleTabChange={handleTabChange} />
+        {/* Guests */}
+        <Grid item xs={12} sm={6} md={4}>
+          <CustomCard>
+            <CardContent>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant='h4'>Guests</Typography>
+                <Typography variant='h4'>{guests.length}</Typography>
+              </div>
+              {guests.map(guest => (
+                <div style={{ padding: '10px' }} key={guest.id}>
+                  <Typography>
+                    {guest.name} - {guest.role_name}
+                  </Typography>
+                  <div style={{ marginRight: '10px', marginTop: '10px' }}>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      onClick={() => changeGuestRole(guest.user_id, 'Student')}
+                    >
+                      Make Student
+                    </Button>
+                    <Button
+                      style={{ marginLeft: '10px' }}
+                      variant='contained'
+                      color='secondary'
+                      onClick={() => changeGuestRole(guest.user_id, 'Teacher')}
+                    >
+                      Make Teacher
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </CustomCard>
+        </Grid>
+        {/* Top Courses */}
+        <Grid item xs={12}>
+          <CustomCard>
+            <CardContent>
+              <Typography variant='h4' gutterBottom>
+                Top courses
+              </Typography>
+              <List>
+                {topCourses.map(course => (
+                  <ListItem key={course.id}>
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: '#f0f0f0', color: 'black' }}>A</Avatar>
+                    </ListItemAvatar>
+                    <Typography variant='h6' gutterBottom>
+                      {course.title}
+                    </Typography>
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </CustomCard>
+        </Grid>
 
-      {/* Search and Sort */}
-      <Box display='flex' justifyContent='space-between' alignItems='center' sx={{ mt: 2 }}>
-        <TextField
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <Search />
-              </InputAdornment>
-            )
-          }}
-          placeholder='Search...'
-          variant='outlined'
-          fullWidth
-          sx={{ mr: 2 }}
-          onChange={handleSearchChange}
-        />
-        <Button variant='contained' onClick={handleClick} sx={{ minWidth: 150 }}>
-          Sort
-        </Button>
+        {/* Courses */}
+        <Grid container spacing={3}>
+          {/* Courses */}
+          <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='h4'>Course Title</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='h4'>Teacher</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='h4'>Enrolled Users</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='h4'>Total Duration</Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedCourses.map(course => (
+                    <TableRow key={course.id}>
+                      <TableCell>{course.title}</TableCell>
+                      <TableCell>{course.teacher}</TableCell>
+                      <TableCell>{course.enrolledUsers}</TableCell>
+                      <TableCell>{course.totalDuration}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-        {/* Sort Menu */}
-        <SortingMenu
-          anchorEl={anchorEl}
-          open={open}
-          handleClose={handleClose}
-          handleOptionClick={handleOptionClick}
-          selectedOption={selectedOption}
-        />
-      </Box>
-
-      {/* Course Cards */}
-      <Grid container spacing={2} sx={{ mt: 2 }}>
-        {filteredCourses.length > 0 ? (
-          filteredCourses.map((course: Course) => <CourseCard key={course.id} course={course} />)
-        ) : (
-          <Typography variant='body1' sx={{ mt: 4 }}>
-            No courses available for this tab.
-          </Typography>
-        )}
+            {/* Pagination Controls */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+              <Button disabled={page === 1} onClick={handlePreviousPage}>
+                Previous
+              </Button>
+              <Typography style={{ margin: '0 10px', alignSelf: 'center' }}>
+                Page {page} of {totalPages}
+              </Typography>
+              <Button disabled={page === totalPages} onClick={handleNextPage}>
+                Next
+              </Button>
+            </div>
+          </Grid>
+        </Grid>
       </Grid>
-    </Box>
+    </div>
   )
 }
 

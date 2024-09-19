@@ -24,3 +24,12 @@ interface Lesson {
   title: string
   is_published: boolean
 }
+
+export interface Users {
+  role_name: string
+  id: string
+  user_id: string
+  role_id: string
+  name: string
+  email: string
+}
