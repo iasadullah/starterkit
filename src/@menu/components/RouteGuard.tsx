@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import useAuth from '@/hooks/useAuth'
-import type { UserRole } from '@/types/roles'
-import { roleRoutes } from '@/types/roles'
+import { UserRole, roleRoutes, elevatedRoutes, elevatedRoles } from '@/types/roles'
 
 const RouteGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
@@ -24,23 +23,27 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
 
     if (!session) {
       setAuthorized(false)
-      router.push('/login') // Redirect to login if no session
+      router.push('/login')
 
       return
     }
 
-    if (userRole === 'superadmin') {
+    if (userRole === UserRole.SUPER_ADMIN) {
       setAuthorized(true)
 
       return
     }
 
     const allowedRoutes = roleRoutes[userRole] || []
-    const isAllowed = allowedRoutes.length === 0 || allowedRoutes.some(route => pathname.startsWith(route))
+    const isAllowed = allowedRoutes.some(route => pathname.startsWith(route))
 
-    setAuthorized(isAllowed)
+    // Check for elevated routes
+    const isElevatedRoute = elevatedRoutes.some(route => pathname.startsWith(route))
+    const canAccessElevatedRoute = elevatedRoles.includes(userRole)
 
-    if (!isAllowed) {
+    setAuthorized(isAllowed && (!isElevatedRoute || canAccessElevatedRoute))
+
+    if (!isAllowed || (isElevatedRoute && !canAccessElevatedRoute)) {
       router.push('/unauthorized')
     }
   }, [isLoading, session, pathname, router])

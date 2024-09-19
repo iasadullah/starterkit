@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { useRouter } from 'next/navigation' // Change this import
+
 import { Card, CardContent, Typography, LinearProgress } from '@mui/material'
 
 import type { EnrolledCourse } from '@/types/course-management/course'
@@ -9,8 +11,14 @@ interface EnrolledCourseCardProps {
 }
 
 export const EnrolledCourseCard: React.FC<EnrolledCourseCardProps> = ({ course }) => {
+  const router = useRouter()
+
+  const handleClick = () => {
+    router.push(`/enrolled-course/${course.course_id}`)
+  }
+
   return (
-    <Card>
+    <Card onClick={handleClick} style={{ cursor: 'pointer' }}>
       <CardContent>
         <Typography variant='h5' component='div'>
           {course.title}

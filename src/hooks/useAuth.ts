@@ -1,42 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import type { User, Session } from '@supabase/supabase-js'
-
-import { supabase } from '@/lib/supabaseClient'
-
-// import { UserRole } from '@/types/roles'
+import type { Session } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const checkSession = async () => {
+    const getSession = async () => {
       const {
         data: { session }
       } = await supabase.auth.getSession()
 
       setSession(session)
-      setUser(session?.user ?? null)
       setIsLoading(false)
     }
 
-    checkSession()
+    getSession()
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session)
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
-      setUser(session?.user ?? null)
-      setIsLoading(false)
     })
 
     return () => {
       authListener.subscription.unsubscribe()
     }
-  }, [])
+  }, [supabase])
 
-  return { user, session, isLoading }
+  return { session, isLoading }
 }
 
 export default useAuth

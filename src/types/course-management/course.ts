@@ -41,3 +41,60 @@ export interface EnrolledCourseListResponse {
   page: number
   per_page: number
 }
+export interface CourseDetails {
+  id: string
+  title: string
+  description: string
+  category: string
+  created_at: string
+  created_by: string
+  updated_at: string
+  is_published: boolean
+  modules: ModuleDetails[]
+}
+
+export interface ModuleDetails {
+  id: string
+  title: string
+  description: string
+  position: number
+  lessons: LessonDetails[]
+}
+
+export interface LessonDetails {
+  id: string
+  title: string
+  content: string
+  position: number
+  is_published: boolean
+  is_prerequisite: boolean
+  quizzes: QuizDetails[]
+  media_items: MediaItem[]
+}
+
+export interface QuizDetails {
+  id: string
+  title: string
+  questions: QuestionDetails[]
+  max_attempts: number
+}
+
+export interface QuestionDetails {
+  id: string
+  type: string
+  question_text: string
+  options: OptionDetails[]
+  correct_answer: string | null
+}
+
+export interface OptionDetails {
+  id: string
+  text: string
+  is_correct: boolean
+}
+
+export interface MediaItem {
+  id: string
+  url: string
+  type: string
+}

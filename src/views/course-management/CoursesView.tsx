@@ -15,26 +15,21 @@ interface CoursesViewProps {
 export const CoursesView: React.FC<CoursesViewProps> = ({ allCourses, enrolledCourses, onEnroll }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'enrolled'>('all')
 
-  const handleEnroll = async (courseId: string) => {
-    try {
-      await onEnroll(courseId)
+  const enrolledCourseIds = new Set(enrolledCourses.map(course => course.course_id))
 
-      // Optionally, you can update the UI or show a success message here
-    } catch (error) {
-      console.error('Failed to enroll:', error)
-
-      // Handle error (e.g., show an error message to the user)
-    }
-  }
+  // Filter out enrolled courses from allCourses
+  const unenrolledCourses = allCourses.filter(course => !enrolledCourseIds.has(course.course_id))
 
   const NoCoursesMessage = () => (
     <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' height='200px'>
       <Typography variant='h6' gutterBottom>
-        You haven't enrolled in any courses yet.
+        {activeTab === 'all' ? 'No available courses.' : "You haven't enrolled in any courses yet."}
       </Typography>
-      <Button variant='contained' color='primary' onClick={() => setActiveTab('all')}>
-        Explore Courses
-      </Button>
+      {activeTab === 'enrolled' && (
+        <Button variant='contained' color='primary' onClick={() => setActiveTab('all')}>
+          Explore Courses
+        </Button>
+      )}
     </Box>
   )
 
@@ -55,7 +50,13 @@ export const CoursesView: React.FC<CoursesViewProps> = ({ allCourses, enrolledCo
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {activeTab === 'all' ? (
-          allCourses.map(course => <CourseCard key={course.course_id} course={course} onEnroll={handleEnroll} />)
+          unenrolledCourses.length > 0 ? (
+            unenrolledCourses.map(course => (
+              <CourseCard key={course.course_id} course={course} onEnroll={onEnroll} isEnrolled={false} />
+            ))
+          ) : (
+            <NoCoursesMessage />
+          )
         ) : enrolledCourses.length > 0 ? (
           enrolledCourses.map(course => <EnrolledCourseCard key={course.course_id} course={course} />)
         ) : (
