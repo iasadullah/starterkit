@@ -18,6 +18,7 @@ import Divider from '@mui/material/Divider'
 
 // Third-party Imports
 import classnames from 'classnames'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // Type Imports
 import type { Mode } from '@core/types'
@@ -34,14 +35,13 @@ import themeConfig from '@configs/themeConfig'
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
 
-// import { POST } from '@/app/api/Auth/login/route'
-import { supabase } from '@/lib/supabaseClient'
-
 const LoginV2 = ({ mode }: { mode: Mode }) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
@@ -55,6 +55,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
   const router = useRouter()
   const { settings } = useSettings()
   const authBackground = useImageVariant(mode, lightImg, darkImg)
+  const supabase = createClientComponentClient()
 
   const characterIllustration = useImageVariant(
     mode,
@@ -66,26 +67,45 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const onSubmitPressed = async (event: any) => {
+  const onSubmitPressed = async (event: React.FormEvent) => {
     event.preventDefault()
 
+    setError(null)
+
     try {
-      const response = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
 
-      if (response.error) {
-        console.error('Error:', response.error.message)
+      if (error) throw error
 
-        // Handle error here, e.g., show error message to user
-      } else {
-        router.push('/home')
+      // Fetch user role
+      const { data: roleData, error: roleError } = await supabase.rpc('get_user_role', {
+        p_user_id: data.user.id
+      })
+
+      if (roleError) throw roleError
+
+      // Combine auth data with role data
+      const userData = {
+        ...data,
+        role: roleData && roleData.length > 0 ? roleData[0] : null
       }
+
+      console.log('User data:', userData)
+
+      // Store user data in localStorage or state management solution
+      localStorage.setItem('userData', JSON.stringify(userData))
+
+      // Refresh the page to update the server-side session
+      router.refresh()
+
+      // Navigate to home page or handle the successful login
+      router.push('/home')
     } catch (error: any) {
       console.error('Error:', error.message)
-
-      // Handle error here, e.g., show error message to user
+      setError(error.message)
     }
   }
 
@@ -121,20 +141,14 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
             <Typography className='mbs-1'>Please sign-in to your account and start the adventure</Typography>
           </div>
-          <form
-            noValidate
-            autoComplete='off'
-            onSubmit={e => {
-              onSubmitPressed(e)
-            }}
-            className='flex flex-col gap-5'
-          >
-            <TextField onChange={e => setEmail(e.target.value)} autoFocus fullWidth label='Email' />
+          <form noValidate autoComplete='off' onSubmit={onSubmitPressed} className='flex flex-col gap-5'>
+            <TextField autoFocus fullWidth label='Email' value={email} onChange={e => setEmail(e.target.value)} />
             <TextField
               fullWidth
               label='Password'
-              type={isPasswordShown ? 'text' : 'password'}
+              value={password}
               onChange={e => setPassword(e.target.value)}
+              type={isPasswordShown ? 'text' : 'password'}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>
@@ -151,11 +165,15 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
               }}
             />
             <div className='flex justify-between items-center flex-wrap gap-x-3 gap-y-1'>
-              <FormControlLabel control={<Checkbox />} label='Remember me' />
+              <FormControlLabel
+                control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
+                label='Remember me'
+              />
               <Typography className='text-end' color='primary' component={Link}>
                 Forgot password?
               </Typography>
             </div>
+            {error && <Typography color='error'>{error}</Typography>}
             <Button fullWidth variant='contained' type='submit'>
               Log In
             </Button>

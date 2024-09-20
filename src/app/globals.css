@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'react-quill/dist/quill.snow.css';
 
 :root {
   --border-radius: var(--mui-shape-borderRadius);
@@ -129,4 +130,36 @@ code {
   color: var(--mui-palette-info-main);
   background-color: rgb(var(--mui-palette-info-mainChannel) / 0.08);
   border: 0;
+}
+.quill-content h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-block-end: 0.5em;
+}
+
+.quill-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-block-end: 0.5em;
+}
+
+.quill-content p {
+  margin-block-end: 1em;
+}
+
+.quill-content ul,
+.quill-content ol {
+  margin-block-end: 1em;
+  padding-inline-start: 2em;
+}
+
+.quill-content li {
+  margin-block-end: 0.5em;
+}
+
+.quill-content blockquote {
+  border-inline-start: 3px solid #ccc;
+  margin-inline-start: 1.5em;
+  padding-inline-start: 1em;
+  font-style: italic;
 }
