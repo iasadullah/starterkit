@@ -1,6 +1,6 @@
 import { Users } from '@/types/courseListing'
 
-export const updateUserRole = async (userId: string, newRoleId: nubmer) => {
+export const updateUserRole = async (userId: string, newRoleId: any) => {
   try {
     const response = await fetch(`/api/Users/change-role?user_id=${userId}`, {
       method: 'PATCH',

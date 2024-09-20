@@ -43,18 +43,54 @@ interface Course {
 
 // Dummy data
 const initialTeachers: Person[] = [
-  { id: 1, name: 'John Doe', role: 'Teacher' },
-  { id: 2, name: 'Jane Smith', role: 'Teacher' }
+  {
+    id: 1,
+    name: 'John Doe',
+    role: 'Teacher',
+    user_id: 0,
+    role_name: ''
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    role: 'Teacher',
+    user_id: 0,
+    role_name: ''
+  }
 ]
 
 const initialStudents: Person[] = [
-  { id: 3, name: 'Alice Brown', role: 'Student' },
-  { id: 4, name: 'Bob White', role: 'Student' }
+  {
+    id: 3,
+    name: 'Alice Brown',
+    role: 'Student',
+    user_id: 0,
+    role_name: ''
+  },
+  {
+    id: 4,
+    name: 'Bob White',
+    role: 'Student',
+    user_id: 0,
+    role_name: ''
+  }
 ]
 
 const initialGuests: Person[] = [
-  { id: 5, name: 'Charlie Guest', role: 'Guest' },
-  { id: 6, name: 'Diana Guest', role: 'Guest' }
+  {
+    id: 5,
+    name: 'Charlie Guest',
+    role: 'Guest',
+    user_id: 0,
+    role_name: ''
+  },
+  {
+    id: 6,
+    name: 'Diana Guest',
+    role: 'Guest',
+    user_id: 0,
+    role_name: ''
+  }
 ]
 
 const initialCourses: Course[] = [

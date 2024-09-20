@@ -34,6 +34,7 @@ import themeConfig from '@configs/themeConfig'
 // Hook Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
 import { useSettings } from '@core/hooks/useSettings'
+import { firstTimeLoginCheck } from '@/services/first-time-check/loginCheck'
 
 const LoginV2 = ({ mode }: { mode: Mode }) => {
   // States
@@ -79,7 +80,12 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
       })
 
       if (error) throw error
-
+      const userId = data?.user?.id
+      const first_login = await FistTimeLoginCheck(userId)
+      if (first_login) {
+        alert('First time login, please complete your profile')
+        return
+      }
       // Fetch user role
       const { data: roleData, error: roleError } = await supabase.rpc('get_user_role', {
         p_user_id: data.user.id
@@ -106,6 +112,18 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
     } catch (error: any) {
       console.error('Error:', error.message)
       setError(error.message)
+    }
+  }
+
+  const FistTimeLoginCheck = async (userId: string) => {
+    try {
+      const response = await firstTimeLoginCheck(userId)
+      console.log('First time login check response:', response)
+      if (response.status === 'first-time') {
+        return true
+      }
+    } catch (error) {
+      console.error('Error:', error)
     }
   }
 
