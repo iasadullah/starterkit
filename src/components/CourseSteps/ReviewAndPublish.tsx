@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
 
 import DOMPurify from 'dompurify'
+import { Button } from '@mui/material'
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+
+import SaveIcon from '@mui/icons-material/Save'
 
 import { supabase } from '@/lib/supabaseClient'
 import type { Course, Module, Lesson, MediaItem, Quiz, Question } from '@/types/course'
@@ -14,6 +19,7 @@ interface ReviewAndPublishProps {
   questions: Question[]
   onPublish: () => Promise<void>
   onSaveAsDraft: () => Promise<void>
+  onBack: () => void
 }
 
 export default function ReviewAndPublish({
@@ -24,7 +30,8 @@ export default function ReviewAndPublish({
   quizzes,
   questions,
   onPublish,
-  onSaveAsDraft
+  onSaveAsDraft,
+  onBack
 }: ReviewAndPublishProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -218,17 +225,11 @@ export default function ReviewAndPublish({
                                         <ul className='pl-4 mt-1'>
                                           {question.options.map(option => (
                                             <li key={option.id} className={option.is_correct ? 'text-green-600' : ''}>
-                                              {option.text} {option.is_correct && '(Correct)'}
+                                              {option.text}
                                             </li>
                                           ))}
                                         </ul>
                                       )}
-                                      {question.type === 'true_false' && (
-                                        <p className='pl-4 mt-1'>
-                                          Correct answer: {question.correct_answer ? 'True' : 'False'}
-                                        </p>
-                                      )}
-                                      {question.type === 'essay' && <p className='pl-4 mt-1 italic'>Essay question</p>}
                                     </li>
                                   ))}
                               </ul>
@@ -243,24 +244,27 @@ export default function ReviewAndPublish({
         ))}
       </div>
 
-      <div className='flex items-center space-x-4'>
-        <button
-          onClick={handlePublish}
-          disabled={isLoading}
-          className='px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50'
-        >
-          {isLoading ? 'Publishing...' : 'Publish Course'}
-        </button>
-        <button
-          onClick={handleSaveAsDraft}
-          disabled={isLoading}
-          className='px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50'
-        >
-          {isLoading ? 'Saving...' : 'Save as Draft'}
-        </button>
-      </div>
+      {error && <p className='text-red-600'>{error}</p>}
 
-      {error && <p className='text-red-500 mt-4'>{error}</p>}
+      <div className='flex space-x-4 mt-4'>
+        <Button variant='contained' color='primary' onClick={handlePublish} disabled={isLoading} sx={{ width: '20%' }}>
+          {isLoading ? 'Publishing...' : 'Publish'}
+        </Button>
+        <div className='flex justify-end items-end w-full gap-2'>
+          <Button
+            variant='outlined'
+            color='primary'
+            onClick={handleSaveAsDraft}
+            disabled={isLoading}
+            startIcon={<SaveIcon />}
+          >
+            {isLoading ? 'Saving...' : 'Save as Draft'}
+          </Button>
+          <Button variant='outlined' color='primary' onClick={onBack} startIcon={<ArrowBackIcon />}>
+            Back
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

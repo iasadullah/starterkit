@@ -11,7 +11,7 @@ const CreateCoursePage: NextPage = () => {
         <title>Create a New Course</title>
         <meta name='description' content='Create a new course on our platform' />
       </Head>
-      <h1 className='text-3xl font-bold mb-8'>Create a New Course</h1>
+      {/* <h1 className='text-3xl font-bold mb-8'>Create a New Course</h1> */}
       <CourseCreationWizard />
     </div>
   )

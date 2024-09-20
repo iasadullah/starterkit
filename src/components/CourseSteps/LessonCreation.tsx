@@ -3,12 +3,37 @@ import React, { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 
 import { v4 as uuidv4 } from 'uuid'
+import {
+  Button,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Box,
+  Typography,
+  Paper,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Divider
+} from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import AddIcon from '@mui/icons-material/Add'
+import UploadIcon from '@mui/icons-material/Upload'
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import type { Module, Lesson, MediaItem, Quiz, Question, Option } from '@/types/course'
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
-  loading: () => <p>Loading editor...</p>
+  loading: () => <Typography>Loading editor...</Typography>
 })
 
 interface LessonCreationProps {
@@ -18,6 +43,8 @@ interface LessonCreationProps {
   initialMediaItems: MediaItem[]
   initialQuizzes: Quiz[]
   initialQuestions: Question[]
+  onNext: () => void
+  onBack: () => void
 }
 
 export default function LessonCreation({
@@ -26,7 +53,9 @@ export default function LessonCreation({
   initialLessons,
   initialMediaItems,
   initialQuizzes,
-  initialQuestions
+  initialQuestions,
+  onNext,
+  onBack
 }: LessonCreationProps) {
   const [lessons, setLessons] = useState<Lesson[]>(initialLessons)
   const [mediaItems, setMediaItems] = useState<MediaItem[]>(initialMediaItems)
@@ -186,221 +215,285 @@ export default function LessonCreation({
   }
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-8'>
+    <Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {modules.map(module => (
-        <div key={module.id} className='p-4 border rounded-md space-y-4'>
-          <h3 className='text-lg font-semibold'>{module.title}</h3>
+        <Paper key={module.id} sx={{ padding: 4, borderRadius: 2 }}>
+          <Typography variant='h2' sx={{ fontWeight: 'bold', marginBottom: 4 }}>
+            Lesson Name: {module.title}
+          </Typography>
+          <Divider sx={{ marginBottom: 4 }} />
           {lessons
             .filter(lesson => lesson.module_id === module.id)
             .map(lesson => (
-              <div key={lesson.id} className='p-3 border rounded space-y-3'>
-                <input
-                  type='text'
+              <Box key={lesson.id} sx={{ padding: 2, borderRadius: 2, marginBottom: 2 }}>
+                <TextField
+                  label='Lesson Title'
                   value={lesson.title}
                   onChange={e => updateLesson(lesson.id, 'title', e.target.value)}
-                  placeholder='Lesson Title'
-                  className='w-full p-2 border rounded'
+                  fullWidth
+                  variant='outlined'
+                  sx={{ marginBottom: 2 }}
                 />
 
                 {mounted && (
-                  <ReactQuill
-                    theme='snow'
-                    value={lesson.content}
-                    onChange={content => updateLesson(lesson.id, 'content', content)}
-                    className='mt-2'
-                  />
+                  <Box sx={{ marginTop: 2 }}>
+                    <ReactQuill
+                      theme='snow'
+                      value={lesson.content}
+                      onChange={content => updateLesson(lesson.id, 'content', content)}
+                      style={{ height: '200px' }}
+                    />
+                  </Box>
                 )}
 
-                <div className='mt-4'>
-                  <h4 className='font-medium'>Media</h4>
-                  <input
-                    type='file'
-                    onChange={e => handleFileUpload(e, lesson.id)}
-                    className='mt-2'
-                    multiple
-                    accept='image/*,video/*,application/pdf'
-                  />
-                  <div className='mt-2 space-y-2'>
+                <Box sx={{ marginTop: 2, paddingTop: 15 }}>
+                  <Typography variant='subtitle1'>Media</Typography>
+                  <Button variant='contained' component='label' sx={{ marginTop: 1 }} startIcon={<UploadIcon />}>
+                    Upload Files
+                    <input
+                      type='file'
+                      onChange={e => handleFileUpload(e, lesson.id)}
+                      multiple
+                      accept='image/*,video/*,application/pdf'
+                      hidden
+                    />
+                  </Button>
+                  <List sx={{ marginTop: 2 }}>
                     {mediaItems
                       .filter(item => item.lesson_id === lesson.id)
                       .map(item => (
-                        <div key={item.id} className='flex items-center justify-between p-2 border rounded'>
-                          <span>{item.name}</span>
-                          <button
-                            type='button'
-                            onClick={() => removeMediaItem(item.id)}
-                            className='px-2 py-1 bg-red-500 text-white rounded'
-                          >
-                            Remove
-                          </button>
-                        </div>
+                        <ListItem key={item.id} sx={{ padding: 1, border: '1px solid #ddd', borderRadius: 1 }}>
+                          <ListItemText primary={item.name} />
+                          <ListItemSecondaryAction>
+                            <IconButton edge='end' onClick={() => removeMediaItem(item.id)} color='error'>
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
                       ))}
-                  </div>
-                </div>
+                  </List>
+                </Box>
 
                 {quizzes
                   .filter(quiz => quiz.lesson_id === lesson.id)
                   .map(quiz => (
-                    <div key={quiz.id} className='p-2 border rounded'>
-                      <input
-                        type='text'
+                    <Box key={quiz.id} sx={{ padding: 2, border: '1px solid #ddd', borderRadius: 2, marginTop: 2 }}>
+                      <TextField
+                        label='Quiz Title'
                         value={quiz.title}
                         onChange={e => updateQuiz(quiz.id, 'title', e.target.value)}
-                        placeholder='Quiz Title'
-                        className='w-full p-2 border rounded'
+                        fullWidth
+                        variant='outlined'
+                        sx={{ marginBottom: 2 }}
                       />
-                      <input
+                      <TextField
+                        label='Max Attempts'
                         type='number'
                         value={quiz.max_attempts}
                         onChange={e => updateQuiz(quiz.id, 'max_attempts', parseInt(e.target.value) || 1)}
-                        placeholder='Max Attempts'
-                        className='mt-2 p-2 border rounded'
+                        fullWidth
+                        variant='outlined'
+                        sx={{ marginBottom: 2 }}
                       />
                       {questions
                         .filter(question => question.quiz_id === quiz.id)
                         .map(question => (
-                          <div key={question.id} className='mt-2 p-2 border rounded'>
-                            <input
-                              type='text'
+                          <Box
+                            key={question.id}
+                            sx={{
+                              padding: 2,
+                              border: '1px solid #ddd',
+                              borderRadius: 2,
+                              marginTop: 2,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 2
+                            }}
+                          >
+                            <TextField
+                              label='Question'
                               value={question.question_text}
                               onChange={e => updateQuestion(question.id, 'question_text', e.target.value)}
-                              placeholder='Question'
-                              className='w-full p-2 border rounded'
+                              fullWidth
+                              variant='outlined'
+                              sx={{ marginBottom: 2 }}
                             />
-                            <select
-                              value={question.type}
-                              onChange={e => updateQuestion(question.id, 'type', e.target.value as Question['type'])}
-                              className='mt-2 p-2 border rounded'
-                            >
-                              <option value='multiple_choice'>Multiple Choice</option>
-                              <option value='true_false'>True/False</option>
-                              <option value='essay'>Essay</option>
-                            </select>
+                            <FormControl fullWidth variant='outlined' sx={{ marginBottom: 2 }}>
+                              <InputLabel>Question Type</InputLabel>
+                              <Select
+                                value={question.type}
+                                onChange={e => updateQuestion(question.id, 'type', e.target.value as Question['type'])}
+                              >
+                                <MenuItem value='multiple_choice'>Multiple Choice</MenuItem>
+                                <MenuItem value='true_false'>True/False</MenuItem>
+                                <MenuItem value='essay'>Essay</MenuItem>
+                              </Select>
+                            </FormControl>
                             {question.type === 'multiple_choice' && (
-                              <div className='mt-2 space-y-2'>
+                              <Box sx={{ marginTop: 2 }}>
                                 {question.options.map(option => (
-                                  <div key={option.id} className='flex items-center space-x-2'>
-                                    <input
-                                      type='text'
+                                  <Box
+                                    key={option.id}
+                                    sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 1 }}
+                                  >
+                                    <TextField
+                                      label='Option'
                                       value={option.text}
                                       onChange={e => updateOption(question.id, option.id, 'text', e.target.value)}
-                                      placeholder='Option'
-                                      className='flex-grow p-2 border rounded'
+                                      fullWidth
+                                      variant='outlined'
                                     />
-                                    <label className='flex items-center'>
-                                      <input
-                                        type='checkbox'
-                                        checked={option.is_correct}
-                                        onChange={e =>
-                                          updateOption(question.id, option.id, 'is_correct', e.target.checked)
-                                        }
-                                        className='mr-2'
-                                      />
-                                      Correct
-                                    </label>
-                                    <button
-                                      type='button'
+                                    <FormControlLabel
+                                      control={
+                                        <Checkbox
+                                          checked={option.is_correct}
+                                          onChange={e =>
+                                            updateOption(question.id, option.id, 'is_correct', e.target.checked)
+                                          }
+                                        />
+                                      }
+                                      label='Correct'
+                                    />
+
+                                    <IconButton
                                       onClick={() => removeOption(question.id, option.id)}
-                                      className='px-2 py-1 bg-red-500 text-white rounded'
+                                      color='error'
+                                      size='small'
                                     >
-                                      Remove
-                                    </button>
-                                  </div>
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Box>
                                 ))}
-                                <button
-                                  type='button'
+                                <Button
+                                  variant='outlined'
+                                  color='primary'
+                                  size='small'
+                                  startIcon={<AddIcon />}
                                   onClick={() => addOption(question.id)}
-                                  className='px-2 py-1 bg-green-500 text-white rounded'
                                 >
                                   Add Option
-                                </button>
-                              </div>
+                                </Button>
+                              </Box>
                             )}
                             {question.type === 'true_false' && (
-                              <div className='mt-2'>
-                                <label className='flex items-center'>
-                                  <input
-                                    type='radio'
-                                    checked={question.correct_answer === 'true'}
-                                    onChange={() => updateQuestion(question.id, 'correct_answer', 'true')}
-                                    className='mr-2'
-                                  />
-                                  True
-                                </label>
-                                <label className='flex items-center mt-2'>
-                                  <input
-                                    type='radio'
-                                    checked={question.correct_answer === 'false'}
-                                    onChange={() => updateQuestion(question.id, 'correct_answer', 'false')}
-                                    className='mr-2'
-                                  />
-                                  False
-                                </label>
-                              </div>
+                              <Box sx={{ marginTop: 2 }}>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={question.correct_answer === 'true'}
+                                      onChange={() => updateQuestion(question.id, 'correct_answer', 'true')}
+                                    />
+                                  }
+                                  label='True'
+                                />
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={question.correct_answer === 'false'}
+                                      onChange={() => updateQuestion(question.id, 'correct_answer', 'false')}
+                                    />
+                                  }
+                                  label='False'
+                                />
+                              </Box>
                             )}
-                            <button
-                              type='button'
+                            <Button
+                              variant='outlined'
+                              color='error'
+                              size='small'
                               onClick={() => removeQuestion(question.id)}
-                              className='mt-2 px-2 py-1 bg-red-500 text-white rounded'
+                              startIcon={<DeleteIcon />}
+                              sx={{ marginTop: 2 }}
                             >
                               Remove Question
-                            </button>
-                          </div>
+                            </Button>
+                          </Box>
                         ))}
-                      <button
-                        type='button'
-                        onClick={() => addQuestion(quiz.id)}
-                        className='mt-2 px-2 py-1 bg-green-500 text-white rounded'
-                      >
-                        Add Question
-                      </button>
-                      <button
-                        type='button'
-                        onClick={() => removeQuiz(quiz.id)}
-                        className='mt-2 px-2 py-1 bg-red-500 text-white rounded'
-                      >
-                        Remove Quiz
-                      </button>
-                    </div>
+                      <div className='flex justify-end gap-2'>
+                        <Button
+                          variant='contained'
+                          size='small'
+                          color='primary'
+                          startIcon={<AddIcon />}
+                          onClick={() => addQuestion(quiz.id)}
+                          sx={{ marginTop: 2 }}
+                        >
+                          Add Question
+                        </Button>
+                        <Button
+                          variant='contained'
+                          color='error'
+                          size='small'
+                          onClick={() => removeQuiz(quiz.id)}
+                          startIcon={<DeleteIcon />}
+                          sx={{ marginTop: 2 }}
+                        >
+                          Remove Quiz
+                        </Button>
+                      </div>
+                    </Box>
                   ))}
-                <button
-                  type='button'
+                <Button
+                  variant='outlined'
+                  color='primary'
+                  size='small'
+                  startIcon={<AddIcon />}
                   onClick={() => addQuiz(lesson.id)}
-                  className='px-2 py-1 bg-green-500 text-white rounded'
+                  sx={{ marginTop: 2 }}
                 >
                   Add Quiz
-                </button>
-
-                <div className='flex items-center'>
-                  <input
-                    type='checkbox'
-                    checked={lesson.is_prerequisite}
-                    onChange={e => updateLesson(lesson.id, 'is_prerequisite', e.target.checked)}
-                    className='mr-2'
+                </Button>
+                <div className='flex justify-end gap-2'>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={lesson.is_prerequisite}
+                        onChange={e => updateLesson(lesson.id, 'is_prerequisite', e.target.checked)}
+                      />
+                    }
+                    label='Is Prerequisite'
+                    sx={{ marginTop: 2 }}
                   />
-                  <label>Is Prerequisite</label>
+                  <Button
+                    variant='outlined'
+                    color='error'
+                    size='small'
+                    onClick={() => removeLesson(lesson.id)}
+                    startIcon={<DeleteIcon />}
+                    sx={{ marginTop: 2 }}
+                  >
+                    Remove Lesson
+                  </Button>
                 </div>
-                <button
-                  type='button'
-                  onClick={() => removeLesson(lesson.id)}
-                  className='px-2 py-1 bg-red-500 text-white rounded'
-                >
-                  Remove Lesson
-                </button>
-              </div>
+              </Box>
             ))}
-          <button
-            type='button'
+          <Button
+            variant='outlined'
+            color='primary'
+            size='small'
+            startIcon={<AddIcon />}
             onClick={() => addLesson(module.id)}
-            className='px-2 py-1 bg-green-500 text-white rounded'
+            sx={{ marginTop: 2 }}
           >
             Add Lesson
-          </button>
-        </div>
+          </Button>
+        </Paper>
       ))}
-      <button type='submit' className='px-4 py-2 bg-blue-500 text-white rounded'>
-        Next
-      </button>
-    </form>
+      <div className='flex justify-end gap-2'>
+        <Button
+          type='button'
+          variant='outlined'
+          color='primary'
+          size='small'
+          onClick={onBack}
+          startIcon={<ArrowBackIcon />}
+        >
+          Back
+        </Button>
+        <Button type='submit' variant='contained' color='primary' endIcon={<ArrowForwardIcon />}>
+          Next
+        </Button>
+      </div>
+    </Box>
   )
 }

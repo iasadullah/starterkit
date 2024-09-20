@@ -31,8 +31,8 @@ export default function CourseCreationWizard() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
 
-  const nextStep = () => setStep(step + 1)
-  const prevStep = () => setStep(step - 1)
+  const nextStep = () => setStep(prevStep => prevStep + 1)
+  const prevStep = () => setStep(prevStep => (prevStep > 0 ? prevStep - 1 : prevStep))
 
   const handleBasicInfoSubmit = (basicInfo: Partial<Course>) => {
     setCourse(prev => ({ ...prev, ...basicInfo }))
@@ -41,7 +41,8 @@ export default function CourseCreationWizard() {
 
   const handleModuleCreation = (newModules: Module[]) => {
     setModules(newModules)
-    nextStep()
+
+    // Remove the nextStep() call from here
   }
 
   const handleLessonCreation = (
@@ -160,9 +161,16 @@ export default function CourseCreationWizard() {
   const renderStep = () => {
     switch (step) {
       case 0:
-        return <BasicInfo onSubmit={handleBasicInfoSubmit} initialData={course} />
+        return <BasicInfo onSubmit={handleBasicInfoSubmit} initialData={course} onNext={nextStep} onBack={prevStep} />
       case 1:
-        return <ModuleCreation onSubmit={handleModuleCreation} initialModules={modules} />
+        return (
+          <ModuleCreation
+            onSubmit={handleModuleCreation}
+            initialModules={modules}
+            onNext={nextStep}
+            onBack={prevStep}
+          />
+        )
       case 2:
         return (
           <LessonCreation
@@ -172,6 +180,8 @@ export default function CourseCreationWizard() {
             initialMediaItems={mediaItems}
             initialQuizzes={quizzes}
             initialQuestions={questions}
+            onNext={nextStep}
+            onBack={prevStep}
           />
         )
       case 3:
@@ -185,6 +195,7 @@ export default function CourseCreationWizard() {
             questions={questions}
             onPublish={handlePublish}
             onSaveAsDraft={handleSaveAsDraft}
+            onBack={prevStep}
           />
         )
       default:
@@ -199,13 +210,6 @@ export default function CourseCreationWizard() {
         <p>Current Step: {STEPS[step]}</p>
       </div>
       {renderStep()}
-      <div className='mt-4 flex justify-between'>
-        {step > 0 && (
-          <button onClick={prevStep} className='px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300'>
-            Previous
-          </button>
-        )}
-      </div>
     </div>
   )
 }
