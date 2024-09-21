@@ -1,7 +1,10 @@
 'use client'
-import React, { useState, ChangeEvent, MouseEvent } from 'react'
+import type { ChangeEvent, MouseEvent } from 'react'
+import React, { useState } from 'react'
+
 import { Box, Button, TextField, Typography, Grid, InputAdornment, IconButton } from '@mui/material'
 import { Edit, Save, Search } from '@mui/icons-material'
+
 import coursesData from '../../../utils/courseData/courseData'
 import { CourseCard, EditableHeading, SortingMenu, TabControls } from '../../../components/CourseList'
 
@@ -19,6 +22,7 @@ const Page: React.FC = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedOption, setSelectedOption] = useState<string>('')
+  const [isGenerating, setIsGenerating] = useState<boolean>(false)
 
   const open = Boolean(anchorEl)
 
@@ -32,6 +36,7 @@ const Page: React.FC = () => {
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option)
+
     // Apply the sorting/filtering logic here based on the selected option
     handleClose()
   }
@@ -49,9 +54,52 @@ const Page: React.FC = () => {
     setTabValue(newValue)
   }
 
+  const handleGenerateCourseOutline = async () => {
+    setIsGenerating(true)
+
+    try {
+      const courseDesc = 'Deep insights into AI'
+
+      const settings = {
+        number_of_modules: 2,
+        number_of_lessons_per_module: 3,
+        quiz_passing_percentage: 80,
+        quizzes_per_lesson: 2,
+        questions_per_quiz: 4,
+        assignment_passing_percentage: 80,
+        assignment_per_lesson: 2,
+        questions_per_assignment: 3,
+        course_passing_percentage: 60
+      }
+
+      const response = await fetch('/api/generate-course', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseDesc, settings })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate course outline')
+      }
+
+      const data = await response.json()
+
+      console.log('Generated Course Outline:', data.content)
+    } catch (error) {
+      console.error('Error:', error)
+
+      // Handle error (e.g., show error message to user)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   const filteredCourses = coursesData.filter((course: Course) => {
     if (tabValue === 1 && course.isDraft) return false // My Learning tab: no drafts
     if (tabValue === 2 && !course.isDraft) return false // Drafts tab: only drafts
+
     return course.title.toLowerCase().includes(searchQuery)
   })
 
@@ -69,6 +117,11 @@ const Page: React.FC = () => {
       />
 
       {/* Create and Certificate Buttons */}
+      <Box sx={{ mt: 2, mb: 2 }}>
+        <Button variant='contained' onClick={handleGenerateCourseOutline} disabled={isGenerating}>
+          {isGenerating ? 'Generating...' : 'Generate Course Outline'}
+        </Button>
+      </Box>
 
       {/* Tabs */}
       <TabControls tabValue={tabValue} handleTabChange={handleTabChange} />

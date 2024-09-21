@@ -25,6 +25,7 @@ export default function CoursesPage() {
         data: { user }
       } = await supabase.auth.getUser()
 
+      console.log('users::', user)
       setUser(user)
     }
 

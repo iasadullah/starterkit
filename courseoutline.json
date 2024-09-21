@@ -1,0 +1,208 @@
+{
+  "course_outline": {
+    "title": "Deep Insights into Artificial Intelligence",
+    "description": "This course provides a comprehensive exploration of artificial intelligence, covering its fundamental concepts, applications, and implications. Students will gain deep insights into AI technologies, algorithms, and their impact on various industries.",
+    "core_learning_objectives": [
+      "Understand the fundamental concepts and principles of artificial intelligence",
+      "Explore various AI algorithms and their applications in real-world scenarios",
+      "Analyze the ethical implications and societal impact of AI technologies",
+      "Develop critical thinking skills to evaluate AI solutions and their effectiveness",
+      "Gain practical experience in implementing basic AI algorithms"
+    ],
+    "course_tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Neural Networks",
+      "Ethics in AI",
+      "AI Applications"
+    ],
+    "lessons": [
+      {
+        "id": "lesson_1",
+        "title": "Introduction to Artificial Intelligence",
+        "overview": "This lesson provides an introduction to artificial intelligence, its history, and its current state. Students will learn about the fundamental concepts and principles that underpin AI technologies.",
+        "topics": [
+          {
+            "id": "topic_1_1",
+            "title": "Defining Artificial Intelligence",
+            "content": ""
+          },
+          {
+            "id": "topic_1_2",
+            "title": "Historical Overview of AI",
+            "content": ""
+          },
+          {
+            "id": "topic_1_3",
+            "title": "Fundamental Concepts in AI",
+            "content": ""
+          },
+          {
+            "id": "topic_1_4",
+            "title": "Types of AI: Narrow vs. General AI",
+            "content": ""
+          },
+          {
+            "id": "topic_1_5",
+            "title": "AI Approaches: Symbolic AI vs. Machine Learning",
+            "content": ""
+          },
+          {
+            "id": "topic_1_6",
+            "title": "Key Components of AI Systems",
+            "content": ""
+          },
+          {
+            "id": "topic_1_7",
+            "title": "Applications of AI in Various Industries",
+            "content": ""
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz_1_1",
+            "title": "Introduction to AI Concepts",
+            "questions": [
+              {
+                "id": "q_1_1_1",
+                "question": "What is the main difference between Narrow AI and General AI?",
+                "options": [
+                  "Narrow AI is more advanced than General AI",
+                  "General AI can perform a wide range of tasks, while Narrow AI is designed for specific tasks",
+                  "Narrow AI requires more computing power than General AI",
+                  "General AI is widely used today, while Narrow AI is still theoretical"
+                ],
+                "correct_answer": "General AI can perform a wide range of tasks, while Narrow AI is designed for specific tasks"
+              }
+            ],
+            "pass_grade": 80
+          },
+          {
+            "id": "quiz_1_2",
+            "title": "AI Applications and Components",
+            "questions": [
+              {
+                "id": "q_1_2_1",
+                "question": "Which of the following is NOT a key component of AI systems?",
+                "options": [
+                  "Data",
+                  "Algorithms",
+                  "Social media integration",
+                  "Computing power"
+                ],
+                "correct_answer": "Social media integration"
+              }
+            ],
+            "pass_grade": 80
+          }
+        ],
+        "assignment": {
+          "id": "assignment_1",
+          "title": "AI Application Analysis",
+          "description": "Choose an industry of your interest and research how AI is currently being applied in that sector. Write a brief report (approximately 100 words) discussing the potential benefits and challenges of AI implementation in your chosen industry. Consider the ethical implications and potential societal impact of these AI applications.",
+          "pass_grade": 80
+        },
+        "references": [
+          "Russell, S., & Norvig, P. (2020). Artificial Intelligence: A Modern Approach (4th ed.). Pearson.",
+          "Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep Learning. MIT Press.",
+          "Kaplan, J. (2016). Artificial Intelligence: What Everyone Needs to Know. Oxford University Press.",
+          "Bostrom, N. (2014). Superintelligence: Paths, Dangers, Strategies. Oxford University Press.",
+          "Mitchell, M. (2019). Artificial Intelligence: A Guide for Thinking Humans. Farrar, Straus and Giroux."
+        ]
+      },
+      {
+        "id": "lesson_2",
+        "title": "Machine Learning Fundamentals",
+        "overview": "This lesson introduces the core concepts of machine learning, a key subfield of artificial intelligence. Students will learn about different types of machine learning algorithms and their applications.",
+        "topics": [
+          {
+            "id": "topic_2_1",
+            "title": "Introduction to Machine Learning",
+            "content": ""
+          },
+          {
+            "id": "topic_2_2",
+            "title": "Types of Machine Learning",
+            "content": ""
+          },
+          {
+            "id": "topic_2_3",
+            "title": "Supervised Learning Algorithms",
+            "content": ""
+          },
+          {
+            "id": "topic_2_4",
+            "title": "Unsupervised Learning Algorithms",
+            "content": ""
+          },
+          {
+            "id": "topic_2_5",
+            "title": "Reinforcement Learning",
+            "content": ""
+          },
+          {
+            "id": "topic_2_6",
+            "title": "Feature Engineering and Selection",
+            "content": ""
+          },
+          {
+            "id": "topic_2_7",
+            "title": "Evaluation Metrics and Model Selection",
+            "content": ""
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz_2_1",
+            "title": "Machine Learning Basics",
+            "questions": [
+              {
+                "id": "q_2_1_1",
+                "question": "Which type of machine learning is used when the training data is labeled?",
+                "options": [
+                  "Unsupervised learning",
+                  "Supervised learning",
+                  "Reinforcement learning",
+                  "Semi-supervised learning"
+                ],
+                "correct_answer": "Supervised learning"
+              }
+            ],
+            "pass_grade": 80
+          },
+          {
+            "id": "quiz_2_2",
+            "title": "Machine Learning Algorithms",
+            "questions": [
+              {
+                "id": "q_2_2_1",
+                "question": "Which of the following is an example of an unsupervised learning algorithm?",
+                "options": [
+                  "Linear regression",
+                  "K-means clustering",
+                  "Support Vector Machines",
+                  "Random Forests"
+                ],
+                "correct_answer": "K-means clustering"
+              }
+            ],
+            "pass_grade": 80
+          }
+        ],
+        "assignment": {
+          "id": "assignment_2",
+          "title": "Machine Learning Algorithm Comparison",
+          "description": "Choose two machine learning algorithms (e.g., decision trees and neural networks) and compare their strengths and weaknesses. Write a brief report (approximately 100 words) discussing the types of problems each algorithm is best suited for and any limitations they may have. Consider factors such as interpretability, computational complexity, and performance on different types of data.",
+          "pass_grade": 80
+        },
+        "references": [
+          "Géron, A. (2019). Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow (2nd ed.). O'Reilly Media.",
+          "Murphy, K. P. (2012). Machine Learning: A Probabilistic Perspective. MIT Press.",
+          "James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An Introduction to Statistical Learning. Springer.",
+          "Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep Learning. MIT Press.",
+          "Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction (2nd ed.). MIT Press."
+        ]
+      }
+    ]
+  }
+}
