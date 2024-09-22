@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -23,6 +23,9 @@ import StepReview from './StepReview'
 import StepperWrapper from '@core/styles/stepper'
 import StepperCustomDot from '@components/stepper-dot'
 import StepCourseDescription from './StepCourseDescription'
+import { getOutlineList } from '@/services/Course-Outline'
+import { ApiNames } from '@/configs/ApiName'
+import type { CourseOutlineResponse } from '@/types/courseOutlinetype'
 
 // Vars
 const steps = [
@@ -60,6 +63,19 @@ const getStepContent = (step: number, handleNext: () => void, handlePrev: () => 
 const CreateCourseWizard = () => {
   // States
   const [activeStep, setActiveStep] = useState(0)
+
+  useEffect(() => {
+    fetchOutlineList()
+  }, [])
+
+  const fetchOutlineList = async (): Promise<CourseOutlineResponse> => {
+    const data = { p_user_id: '038d7837-0c61-42e3-a893-2cbdd994f3c4', p_is_draft: 'true' }
+    const outlineList: CourseOutlineResponse = await getOutlineList(ApiNames.getCourseOutlineList, data)
+
+    console.log(outlineList.courses[0].title)
+
+    return outlineList
+  }
 
   const handleNext = () => {
     if (activeStep !== steps.length - 1) {

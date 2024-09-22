@@ -27,6 +27,7 @@ const StepCourseDescription = ({ activeStep, handleNext, handlePrev }: Props) =>
     gradePerAssignment: '',
     totalAttempts: '0'
   })
+
   const wizardSteps = [
     { label: 'Modules', field: 'modules', placeholder: 'No of modules', type: 'number' },
     { label: 'Lessons', field: 'lessons', placeholder: 'No of lessons per module', type: 'number' },

@@ -10,7 +10,7 @@ export enum UserRole {
 export const roleRoutes: Record<UserRole, string[]> = {
   [UserRole.SUPER_ADMIN]: ['/home', '/admin', '/teachers', '/students', '/courses'],
   [UserRole.TEACHER]: ['/home', '/courses', '/students'],
-  [UserRole.STUDENT]: ['/home', '/courses', '/enrolled-course'],
+  [UserRole.STUDENT]: ['/home', '/courses', '/enrolled-course', '/ai-wizard'],
   [UserRole.GUEST]: ['/home']
 }
 
