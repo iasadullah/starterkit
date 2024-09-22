@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { Anthropic } from '@anthropic-ai/sdk'
+import Anthropic from '@anthropic-ai/sdk'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY
@@ -25,28 +25,28 @@ Generate a comprehensive course outline in JSON format with the following struct
     "course_tags": ["", "", "", "", ""],
     "modules": [
       {
-        "id": "unique_module_id",
+
         "title": "",
         "description": "",
         "lessons": [
           {
-            "id": "unique_lesson_id",
+
             "title": "",
             "topics": [
               {
-                "id": "unique_topic_id",
+
                 "title": ""
               }
             ]
           }
         ],
         "quiz": {
-          "id": "unique_quiz_id",
+
           "title": "",
           "question_count": 5
         },
         "assignment": {
-          "id": "unique_assignment_id",
+
           "title": "",
           "description": ""
         }
