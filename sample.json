@@ -1,0 +1,186 @@
+{
+  "id": "f119966a-b627-4a39-9dda-76287690136e",
+  "title": "A muti module course",
+  "modules": [
+    {
+      "id": "9c375029-4aee-4bee-88b4-9c4caae16314",
+      "title": "modeul 1",
+      "lessons": [
+        {
+          "id": "f0fb8792-94a4-4327-8dfb-d081b89e7670",
+          "title": "lesson 11",
+          "content": "<p>asdassd</p>",
+          "quizzes": [
+            {
+              "id": "2bf40210-88a5-4120-8e38-90af121e62b3",
+              "title": "",
+              "questions": [
+                {
+                  "id": "9d1a8434-4be5-421a-ba67-ae8a93a2cbe6",
+                  "type": "multiple_choice",
+                  "options": [],
+                  "question_text": "111",
+                  "correct_answer": null
+                },
+                {
+                  "id": "f130be0d-c167-4ac5-81dd-3964cad90cd8",
+                  "type": "true_false",
+                  "options": [
+                    {
+                      "id": "3f0893ab-2208-41c1-8bda-7f7982871c87",
+                      "text": "",
+                      "is_correct": false
+                    },
+                    {
+                      "id": "cf0d647e-33dd-4bfe-82a2-62cb2bc77fe3",
+                      "text": "",
+                      "is_correct": false
+                    }
+                  ],
+                  "question_text": "123",
+                  "correct_answer": "true"
+                }
+              ],
+              "max_attempts": 1
+            }
+          ],
+          "position": 0,
+          "media_items": [
+            {
+              "id": "f061179c-dcce-45b5-bf17-a641cddf2f7c",
+              "url": "https://your-upload-url.com/315f335c-0654-4676-bd0d-e70a74f310ce.jpeg",
+              "type": "image"
+            }
+          ],
+          "is_published": false,
+          "is_prerequisite": false
+        },
+        {
+          "id": "0c4e646d-2ff0-406f-84dc-47ebf8c714c8",
+          "title": "2222",
+          "content": "<p>123123</p>",
+          "quizzes": [
+            {
+              "id": "9a96eb6b-0503-42f8-a517-d33e64bf0034",
+              "title": "12321321",
+              "questions": [
+                {
+                  "id": "b1a3f311-d6dc-4b25-b24c-acf73bf31fa9",
+                  "type": "essay",
+                  "options": [
+                    {
+                      "id": "22d284a0-a235-4ca7-8146-a2e8f291e88c",
+                      "text": "",
+                      "is_correct": false
+                    },
+                    {
+                      "id": "77134b0a-e5d3-4827-9f3b-48d7d6a7643d",
+                      "text": "",
+                      "is_correct": false
+                    }
+                  ],
+                  "question_text": "11111",
+                  "correct_answer": null
+                }
+              ],
+              "max_attempts": 1
+            },
+            {
+              "id": "705acf0c-363f-42f5-9d51-cb1d2ab89dcd",
+              "title": "123123",
+              "questions": [
+                {
+                  "id": "f80d2575-aa79-46d5-92dd-395690c5b18e",
+                  "type": "multiple_choice",
+                  "options": [
+                    {
+                      "id": "150b26e3-9cf7-4af3-893c-7242cd38feb9",
+                      "text": "111",
+                      "is_correct": true
+                    },
+                    {
+                      "id": "dc8c1777-2ab3-4546-bcb2-2ec5e551c406",
+                      "text": "123123",
+                      "is_correct": true
+                    }
+                  ],
+                  "question_text": "123123",
+                  "correct_answer": null
+                }
+              ],
+              "max_attempts": 1
+            }
+          ],
+          "position": 1,
+          "media_items": [
+            {
+              "id": "f061179c-dcce-45b5-bf17-a641cddf2f7c",
+              "url": "https://your-upload-url.com/315f335c-0654-4676-bd0d-e70a74f310ce.jpeg",
+              "type": "image"
+            }
+          ],
+          "is_published": false,
+          "is_prerequisite": false
+        }
+      ],
+      "position": 0,
+      "description": "123"
+    },
+    {
+      "id": "8f3ea342-9b04-4bc3-96a6-0238080c3ed3",
+      "title": "modeul 2",
+      "lessons": [
+        {
+          "id": "27d446ae-ffe9-4183-9af6-3b5367609988",
+          "title": "123m",
+          "content": "<p>werewer</p>",
+          "quizzes": [
+            {
+              "id": "c8578127-b863-487a-bbfa-a0ad960f7e2f",
+              "title": "werwer",
+              "questions": [
+                {
+                  "id": "14b3a55d-0a64-48cb-89dd-ebb7e0c2371c",
+                  "type": "true_false",
+                  "options": [
+                    {
+                      "id": "1fed0ec1-b9ce-4c05-afae-9dfe7935cb5a",
+                      "text": "wer",
+                      "is_correct": false
+                    },
+                    {
+                      "id": "6695fbcc-3795-4d83-94f8-c00735e96f99",
+                      "text": "",
+                      "is_correct": false
+                    }
+                  ],
+                  "question_text": "werwer",
+                  "correct_answer": "true"
+                }
+              ],
+              "max_attempts": 1
+            }
+          ],
+          "position": 0,
+          "media_items": [
+            {
+              "id": "f061179c-dcce-45b5-bf17-a641cddf2f7c",
+              "url": "https://your-upload-url.com/315f335c-0654-4676-bd0d-e70a74f310ce.jpeg",
+              "type": "image"
+            }
+          ],
+          "is_published": false,
+          "is_prerequisite": false
+        }
+      ],
+      "position": 1,
+      "description": "asdasdasd"
+    }
+  ],
+  "category": "asd",
+  "created_at": "2024-09-18T18:52:26.611077",
+  "created_by": "038d7837-0c61-42e3-a893-2cbdd994f3c4",
+  "updated_at": "2024-09-18T18:52:26.611077",
+  "description": "desc",
+  "is_published": true
+}

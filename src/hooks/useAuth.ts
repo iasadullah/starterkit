@@ -1,11 +1,35 @@
-// src/hooks/useAuth.ts
-import { useAuth } from '../context/AuthContext'
+import { useEffect, useState } from 'react'
 
-export const useAuthActions = () => {
-  const { user, login, logout } = useAuth()
+import type { Session } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-  const isLoggedIn = Boolean(user)
-  const role = user?.role || 'guest' // Placeholder for actual role
+const useAuth = () => {
+  const [session, setSession] = useState<Session | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClientComponentClient()
 
-  return { user, isLoggedIn, login, logout, role }
+  useEffect(() => {
+    const getSession = async () => {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession()
+
+      setSession(session)
+      setIsLoading(false)
+    }
+
+    getSession()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session)
+    })
+
+    return () => {
+      authListener.subscription.unsubscribe()
+    }
+  }, [supabase])
+
+  return { session, isLoading }
 }
+
+export default useAuth
